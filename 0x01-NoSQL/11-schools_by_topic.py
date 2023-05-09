@@ -1,28 +1,16 @@
 #!/usr/bin/env python3
-'''Task 14's module.
+'''Task 11's module.
 '''
 
 
-def top_students(mongo_collection):
-    '''Prints all students in a collection sorted by average score.
+def schools_by_topic(mongo_collection, topic):
+    '''Returns the list of school having a specific topic.
     '''
-    students = mongo_collection.aggregate(
-        [
-            {
-                '$project': {
-                    '_id': 1,
-                    'name': 1,
-                    'averageScore': {
-                        '$avg': {
-                            '$avg': '$topics.score',
-                        },
-                    },
-                    'topics': 1,
-                },
+    topic_filter = {
+        'topics': {
+            '$elemMatch': {
+                '$eq': topic,
             },
-            {
-                '$sort': {'averageScore': -1},
-            },
-        ]
-    )
-    return students
+        },
+    }
+    return [doc for doc in mongo_collection.find(topic_filter)]
